@@ -31,8 +31,26 @@ class GameBoard {
     placeShip(shipType, x, y, headDirection) {
         const thisShip = this.ships.get(shipType);
         console.log(thisShip) 
+        
         // we need isItLegal function
+        this.#isItLegal(thisShip)
+        
         this.#headDirectionLogic(thisShip, x, y, headDirection);
+        
+        this.#changeShipStatusToTrue(thisShip)
+    }
+
+    #isItLegal(ship) {
+        // Check for duplicates
+        if (ship.status === true) {
+            throw new Error('You cannot have duplicates!');
+        }
+
+        // Check for overlaps
+    }
+
+    #changeShipStatusToTrue(ship) {
+        ship.status = true;
     }
 
     #headDirectionLogic(ship, x, y, headDirection) {

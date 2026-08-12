@@ -68,3 +68,22 @@ describe("GameBoard places ships at specific coordinates", () => {
         expect(myBoard.board[7][0]).toBe("T");
     });
 });
+
+describe("isItLegal works", () => {
+    let myBoard;
+    beforeEach(() => {
+        myBoard = new GameBoard();
+    });
+    test("Block duplicate ships", () => {
+        myBoard.placeShip("Destroyer", 5, 7, "eastHead");
+        expect(myBoard.checkBoard(5,7)).toBe('H')
+        expect(myBoard.checkBoard(4,7)).toBe('T')
+        expect(()=>myBoard.placeShip("Destroyer", 0, 0, "northHead")).toThrow('You cannot have duplicates!')
+        expect(myBoard.checkBoard(0,0)).toBe(0) 
+    });
+    test("Block overlapping", () => {
+        myBoard.placeShip("Carrier", 7,1,"northHead")
+        expect(()=>myBoard.placeShip("Cruiser", 4,6,"westHead")).toThrow('You cannot have overlaps!')
+    })
+    
+})

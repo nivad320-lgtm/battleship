@@ -33,35 +33,54 @@ class GameBoard {
         console.log(thisShip);
 
         // we need isItLegal function
-        this.#isItLegal(thisShip);
+        this.#isItLegal(thisShip, x, y, headDirection);
 
         this.#headDirectionLogic(thisShip, x, y, headDirection);
 
         this.#changeShipStatusToTrue(thisShip);
     }
 
-    printBlock([startX, startY], [endX, endY]){
-        const blocks = []
-        if(Math.abs(startX) - Math.abs(endX) !== 0 && Math.abs(startY) - Math.abs(endY) !== 0) {
-            throw new Error("1D Only")
+    // Note: There is something wrong with this logic
+    printBlock([startX, startY], [endX, endY]) {
+        const blocks = [];
+        if (
+            Math.abs(startX) - Math.abs(endX) !== 0 &&
+            Math.abs(startY) - Math.abs(endY) !== 0
+        ) {
+            throw new Error("1D Only");
         }
 
         // NOTE: I don't like how I'm repeating myself
 
         // If X difference is 0
         if (Math.abs(startX) - Math.abs(endX) === 0) {
-            for(let i = 0; i <= Math.abs(startY - endY);i++) {
-                blocks.push(this.checkBoard(startX, startY+i))
+            if (startY >= endY) {
+                for (let i = 0; i <= Math.abs(startY - endY); i++) {
+                    blocks.push(this.checkBoard(startX, startY - i));
+                }
+            }
+            else {
+                for (let i = 0; i <= Math.abs(startY - endY); i++) {
+                    blocks.push(this.checkBoard(startX, startY + i));
+                }
             }
         }
         // If Y difference is 0
+        // BUG: This does not care which direction.
+        // For example eastHead Carrier should decrease X but it always increase
         else if (Math.abs(startY) - Math.abs(endY) === 0) {
-            for(let i = 0; i <= Math.abs(startX - endX);i++) {
-                blocks.push(this.checkBoard(startX+i, startY))
+            if(startX >= endX) {
+                for (let i = 0; i <= Math.abs(startX - endX); i++) {
+                    blocks.push(this.checkBoard(startX - i, startY));
+                }
+            }
+            else {
+                for (let i = 0; i <= Math.abs(startX - endX); i++) {
+                    blocks.push(this.checkBoard(startX + i, startY));
+                }
             }
         }
-        return blocks
-
+        return blocks;
     }
     #isItLegal(ship, x, y, headDirection) {
         // Check for duplicates
@@ -70,6 +89,29 @@ class GameBoard {
         }
 
         // Check for overlaps
+        const preview = this.printBlock(
+            [x, y],
+            this.#tailPosition(ship, x, y, headDirection),
+        );
+        console.log(preview)
+        console.log(this.#tailPosition(ship, x, y, headDirection))
+        if (preview.some((element) => element !== 0)) {
+            throw new Error("You cannot have overlaps!");
+            // }
+        }
+    }
+
+    #tailPosition(ship, x, y, headDirection) {
+        const length = ship.length;
+        if (headDirection === "eastHead") {
+            return [x - length + 1, y];
+        } else if (headDirection === "westHead") {
+            return [x + length - 1, y];
+        } else if (headDirection === "northHead") {
+            return [x, y + length - 1];
+        } else if (headDirection === "southHead") {
+            return [x, y - length + 1];
+        }
     }
 
     #changeShipStatusToTrue(ship) {

@@ -1,0 +1,97 @@
+import Ship from "./ship-class.js";
+
+class GameBoard {
+    constructor() {
+        this.board = this.#generateBoard();
+        this.ships = this.#initiateShips();
+    }
+
+    #generateBoard() {
+        // Note: You could turn these into a parameter
+        const rows = 10;
+        const cols = 10;
+
+        const board = Array.from({ length: rows }, () =>
+            new Array(cols).fill(0),
+        );
+        return board;
+    }
+    #initiateShips() {
+        // create map of ships for constructor
+        const ships = new Map();
+
+        ships.set("Carrier", new Ship(6));
+        ships.set("BattleShip", new Ship(5));
+        ships.set("Cruiser", new Ship(3));
+        ships.set("Submarine", new Ship(3));
+        ships.set("Destroyer", new Ship(2));
+
+        return ships;
+    }
+    placeShip(shipType, x, y, headDirection) {
+        const thisShip = this.ships.get(shipType);
+        console.log(thisShip) 
+        // we need isItLegal function
+        this.#headDirectionLogic(thisShip, x, y, headDirection);
+    }
+
+    #headDirectionLogic(ship, x, y, headDirection) {
+        // Note: Need to check if it's legal!
+        const shipLength = ship.length;
+        const bodyMark = "B";
+        const tailMark = "T";
+        // Set Head
+        this.#changeMark(x, y, "H");
+        
+        let tempX = x
+        let tempY = y
+        // eastHead
+        
+        if (headDirection === "eastHead") {
+            // Set Body
+            for (let i = 0; i < shipLength - 2; i++) {
+                this.#changeMark(tempX -= 1, tempY, bodyMark);
+            }
+            // Set Tail
+            this.#changeMark(x - shipLength + 1, y, tailMark);
+        }
+
+        // westHead
+        if (headDirection === "westHead") {
+            // Set Body
+            for (let i = 0; i < shipLength - 2; i++) {
+                this.#changeMark(tempX += 1, tempY, bodyMark);
+            }
+            // Set Tail
+            this.#changeMark(x + shipLength - 1, y, tailMark);
+        }
+
+        // northHead
+        if (headDirection === "northHead") {
+            // Set Body
+            for (let i = 0; i < shipLength - 2; i++) {
+                this.#changeMark(tempX, tempY+=1, bodyMark);
+            }
+            // Set Tail
+            this.#changeMark(x , y + shipLength - 1, tailMark);
+        }
+
+        // southHead
+        if (headDirection === "southHead") {
+            // Set Body
+            for (let i = 0; i < shipLength - 2; i++) {
+                this.#changeMark(tempX, tempY-=1, bodyMark);
+            }
+            // Set Tail
+            this.#changeMark(x , y- shipLength + 1, tailMark);
+        }
+    }
+    #changeMark(x, y, mark) {
+        this.board[y][x] = mark;
+    }
+    checkBoard(x,y) {
+        return this.board[y][x]
+    }
+}
+
+export default GameBoard;

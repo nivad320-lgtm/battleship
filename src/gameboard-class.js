@@ -30,20 +30,43 @@ class GameBoard {
     }
     placeShip(shipType, x, y, headDirection) {
         const thisShip = this.ships.get(shipType);
-        console.log(thisShip) 
-        
+        console.log(thisShip);
+
         // we need isItLegal function
-        this.#isItLegal(thisShip)
-        
+        this.#isItLegal(thisShip);
+
         this.#headDirectionLogic(thisShip, x, y, headDirection);
-        
-        this.#changeShipStatusToTrue(thisShip)
+
+        this.#changeShipStatusToTrue(thisShip);
     }
 
-    #isItLegal(ship) {
+    printBlock([startX, startY], [endX, endY]){
+        const blocks = []
+        if(Math.abs(startX) - Math.abs(endX) !== 0 && Math.abs(startY) - Math.abs(endY) !== 0) {
+            throw new Error("1D Only")
+        }
+
+        // NOTE: I don't like how I'm repeating myself
+
+        // If X difference is 0
+        if (Math.abs(startX) - Math.abs(endX) === 0) {
+            for(let i = 0; i <= Math.abs(startY - endY);i++) {
+                blocks.push(this.checkBoard(startX, startY+i))
+            }
+        }
+        // If Y difference is 0
+        else if (Math.abs(startY) - Math.abs(endY) === 0) {
+            for(let i = 0; i <= Math.abs(startX - endX);i++) {
+                blocks.push(this.checkBoard(startX+i, startY))
+            }
+        }
+        return blocks
+
+    }
+    #isItLegal(ship, x, y, headDirection) {
         // Check for duplicates
         if (ship.status === true) {
-            throw new Error('You cannot have duplicates!');
+            throw new Error("You cannot have duplicates!");
         }
 
         // Check for overlaps
@@ -60,15 +83,15 @@ class GameBoard {
         const tailMark = "T";
         // Set Head
         this.#changeMark(x, y, "H");
-        
-        let tempX = x
-        let tempY = y
+
+        let tempX = x;
+        let tempY = y;
         // eastHead
-        
+
         if (headDirection === "eastHead") {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
-                this.#changeMark(tempX -= 1, tempY, bodyMark);
+                this.#changeMark((tempX -= 1), tempY, bodyMark);
             }
             // Set Tail
             this.#changeMark(x - shipLength + 1, y, tailMark);
@@ -78,7 +101,7 @@ class GameBoard {
         if (headDirection === "westHead") {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
-                this.#changeMark(tempX += 1, tempY, bodyMark);
+                this.#changeMark((tempX += 1), tempY, bodyMark);
             }
             // Set Tail
             this.#changeMark(x + shipLength - 1, y, tailMark);
@@ -88,27 +111,27 @@ class GameBoard {
         if (headDirection === "northHead") {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
-                this.#changeMark(tempX, tempY+=1, bodyMark);
+                this.#changeMark(tempX, (tempY += 1), bodyMark);
             }
             // Set Tail
-            this.#changeMark(x , y + shipLength - 1, tailMark);
+            this.#changeMark(x, y + shipLength - 1, tailMark);
         }
 
         // southHead
         if (headDirection === "southHead") {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
-                this.#changeMark(tempX, tempY-=1, bodyMark);
+                this.#changeMark(tempX, (tempY -= 1), bodyMark);
             }
             // Set Tail
-            this.#changeMark(x , y- shipLength + 1, tailMark);
+            this.#changeMark(x, y - shipLength + 1, tailMark);
         }
     }
     #changeMark(x, y, mark) {
         this.board[y][x] = mark;
     }
-    checkBoard(x,y) {
-        return this.board[y][x]
+    checkBoard(x, y) {
+        return this.board[y][x];
     }
 }
 

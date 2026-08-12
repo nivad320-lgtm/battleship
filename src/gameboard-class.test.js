@@ -32,9 +32,15 @@ describe("GameBoard initiates ships", () => {
         myBoard = new GameBoard();
     });
     test("Ship constructor exists", () => {
-        const myShips = Array.from(myBoard.ships.keys())
-        console.log(myShips)
-        const shouldHave = ['Carrier', 'BattleShip', 'Cruiser', 'Submarine', 'Destroyer'];
+        const myShips = Array.from(myBoard.ships.keys());
+        console.log(myShips);
+        const shouldHave = [
+            "Carrier",
+            "BattleShip",
+            "Cruiser",
+            "Submarine",
+            "Destroyer",
+        ];
 
         shouldHave.map((m) => expect(myShips).toContain(m));
     });
@@ -52,7 +58,7 @@ describe("GameBoard places ships at specific coordinates", () => {
     });
     test("Can place BattleShip", () => {
         myBoard.placeShip("BattleShip", 0, 1, "northHead");
-        expect(myBoard.checkBoard(0,1)).toBe("H");
+        expect(myBoard.checkBoard(0, 1)).toBe("H");
         expect(myBoard.board[2][0]).toBe("B");
         expect(myBoard.board[3][0]).toBe("B");
         expect(myBoard.board[4][0]).toBe("B");
@@ -76,14 +82,24 @@ describe("isItLegal works", () => {
     });
     test("Block duplicate ships", () => {
         myBoard.placeShip("Destroyer", 5, 7, "eastHead");
-        expect(myBoard.checkBoard(5,7)).toBe('H')
-        expect(myBoard.checkBoard(4,7)).toBe('T')
-        expect(()=>myBoard.placeShip("Destroyer", 0, 0, "northHead")).toThrow('You cannot have duplicates!')
-        expect(myBoard.checkBoard(0,0)).toBe(0) 
+        expect(myBoard.checkBoard(5, 7)).toBe("H");
+        expect(myBoard.checkBoard(4, 7)).toBe("T");
+        expect(() => myBoard.placeShip("Destroyer", 0, 0, "northHead")).toThrow(
+            "You cannot have duplicates!",
+        );
+        expect(myBoard.checkBoard(0, 0)).toBe(0);
     });
-    test("Block overlapping", () => {
-        myBoard.placeShip("Carrier", 7,1,"northHead")
-        expect(()=>myBoard.placeShip("Cruiser", 4,6,"westHead")).toThrow('You cannot have overlaps!')
-    })
+    test("printBlocks function work", () => {
+        expect(()=>myBoard.printBlock([3,2],[4,5])).toThrow('1D Only')
+        myBoard.placeShip("Carrier", 7, 1, "northHead");
+        expect(myBoard.printBlock([7,1], [7,6])).toStrictEqual(['H', 'B', 'B', 'B', 'B', 'T'])
+        expect(myBoard.printBlock([3,4], [8,4])).toStrictEqual([0,0,0,0,'B',0])
+    });
     
-})
+    // test("Block overlapping", () => {
+    //     myBoard.placeShip("Carrier", 7, 1, "northHead");
+    //     expect(() => myBoard.placeShip("Cruiser", 4, 6, "westHead")).toThrow(
+    //         "You cannot have overlaps!",
+    //     );
+    // });
+});

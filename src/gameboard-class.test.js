@@ -155,4 +155,11 @@ describe("receiveAttack", () => {
             "You cannot attack same coordinate twice!"
         )
     })
+    test("records the coordinate of the missed shot", () => {
+        myBoard.receiveAttack(9,9)
+        expect(myBoard.checkBoard(9,9)).toBe("#")
+    })
+    test("sends the `hit` function to the correct ship", () => {
+        //spyOn?
+    })
 })

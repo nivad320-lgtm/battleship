@@ -37,12 +37,18 @@ class GameBoard {
         // we need isItLegal function
         this.#isItLegal(thisShip, x, y, headDirection);
 
-        this.#headDirectionLogic(thisShip, x, y, headDirection);
+        const updatedCor = this.#headDirectionLogic(thisShip, x, y, headDirection);
 
-        this.#changeShipStatusToTrue(thisShip);
+        console.log(updatedCor)
+        this.#setShipStatus(thisShip, updatedCor);
     }
 
     receiveAttack(x, y) {
+        // If it includes H, B or T
+        // X - Been Hit
+        // # - Missed
+        // return hit
+        
         // Check the board
         const coordinate = this.checkBoard(x,y)
         const corValue = this.#returnCoordinateValue(coordinate)
@@ -60,10 +66,6 @@ class GameBoard {
             console.log("Line executed")
             throw new Error ("You cannot attack same coordinate twice!")
         }
-        // If it includes H, B or T
-        // X - Been Hit
-        // # - Missed
-        // return hit
         
     }
     
@@ -129,7 +131,7 @@ class GameBoard {
     #isItLegal(ship, x, y, headDirection) {
         // Check for duplicates
         const tailCoordinate = this.#tailPosition(ship, x, y, headDirection)
-        if (ship.status === true) {
+        if (ship.status.placed === true) {
             throw new Error("You cannot have duplicates!");
         }
 
@@ -169,8 +171,11 @@ class GameBoard {
         }
     }
 
-    #changeShipStatusToTrue(ship) {
-        ship.status = true;
+    #setShipStatus(ship, shipCoordinate) {
+        ship.status = {
+            placed : true,
+            coordinates : shipCoordinate,
+        };
     }
 
     #headDirectionLogic(ship, x, y, headDirection) {
@@ -178,9 +183,11 @@ class GameBoard {
         const shipLength = ship.length;
         const bodyMark = "B";
         const tailMark = "T";
+        // Save and return coordinates that changed
+        const changedCor = []
         // Set Head
         this.#changeMark(x, y, "H");
-
+        changedCor.push([x,y])
         let tempX = x;
         let tempY = y;
         // eastHead
@@ -189,9 +196,12 @@ class GameBoard {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
                 this.#changeMark((tempX -= 1), tempY, bodyMark);
+            changedCor.push([tempX,tempY])
+
             }
             // Set Tail
             this.#changeMark(x - shipLength + 1, y, tailMark);
+            changedCor.push([x - shipLength + 1,y])
         }
 
         // westHead
@@ -199,9 +209,11 @@ class GameBoard {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
                 this.#changeMark((tempX += 1), tempY, bodyMark);
+                changedCor.push([tempX,tempY])
             }
             // Set Tail
             this.#changeMark(x + shipLength - 1, y, tailMark);
+            changedCor.push([x + shipLength - 1,y])
         }
 
         // northHead
@@ -209,9 +221,11 @@ class GameBoard {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
                 this.#changeMark(tempX, (tempY += 1), bodyMark);
+                changedCor.push([tempX,tempY])
             }
             // Set Tail
             this.#changeMark(x, y + shipLength - 1, tailMark);
+            changedCor.push([x,y + shipLength -1])
         }
 
         // southHead
@@ -219,10 +233,13 @@ class GameBoard {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
                 this.#changeMark(tempX, (tempY -= 1), bodyMark);
+                changedCor.push([tempX,tempY])
             }
             // Set Tail
             this.#changeMark(x, y - shipLength + 1, tailMark);
+            changedCor.push([x,y - shipLength + 1])
         }
+        return changedCor
     }
 
     #changeMark(x, y, mark) {

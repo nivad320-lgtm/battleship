@@ -13,3 +13,7 @@ ToDo
     // Wondering because #returnCoordinateValue() is already returning it
 
 - [x] Gameboards should be able to report whether or not all of their ships have been sunk.
+
+- [x] Create a Player class/factory.
+    - [x] There will be two types of players in the game, ‘real’ players and ‘computer’ players.
+    - [x] Each player object should contain its own gameboard.

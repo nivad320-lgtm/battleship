@@ -136,10 +136,23 @@ describe("isItLegal works", () => {
     })
 });
 
-// describe("receiveAttach", () => {
-//     let myBoard;
-//     beforeEach(() => {
-//         myBoard = new GameBoard();
-//         // myBoard 
-//     });
-// })
+describe("receiveAttack", () => {
+    let myBoard;
+    beforeEach(() => {
+        myBoard = new GameBoard();
+        myBoard.placeShip("Cruiser", 3, 3, "eastHead") 
+    });
+    test("receiveAttack function exists", () => {
+        expect(myBoard.receiveAttack(3,3)).toBeDefined();
+    })
+    test("determine whether or not attack hit the ship" , () => {
+        expect(myBoard.receiveAttack(3,3)).toBe("Hit!")
+        expect(myBoard.receiveAttack(4,3)).toBe("Miss!")
+    })
+    test("cannot attack same coordinate twice", () => {
+        expect(myBoard.receiveAttack(9,9)).toBe("Miss!")
+        expect(myBoard.receiveAttack(9,9)).toThrow(
+            "You cannot attack same coordinate twice!"
+        )
+    })
+})

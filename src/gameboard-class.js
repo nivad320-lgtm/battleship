@@ -16,6 +16,7 @@ class GameBoard {
         );
         return board;
     }
+
     #initiateShips() {
         // create map of ships for constructor
         const ships = new Map();
@@ -28,6 +29,7 @@ class GameBoard {
 
         return ships;
     }
+
     placeShip(shipType, x, y, headDirection) {
         const thisShip = this.ships.get(shipType);
         // console.log(thisShip);
@@ -38,6 +40,40 @@ class GameBoard {
         this.#headDirectionLogic(thisShip, x, y, headDirection);
 
         this.#changeShipStatusToTrue(thisShip);
+    }
+
+    receiveAttack(x, y) {
+        // Check the board
+        const coordinate = this.checkBoard(x,y)
+        const corValue = this.#returnCoordinateValue(coordinate)
+        if (corValue === 'ship') {
+            return "Hit!"
+        } else if (corValue === 'ocean') {
+            return "Miss!"
+        } else if (corValue === 'hit' || corValue === 'miss') {
+            throw new Error ("You cannot attack same coordinate twice!")
+        }
+        // If it includes H, B or T
+        // X - Been Hit
+        // # - Missed
+        // return hit
+        
+    }
+    
+    #returnCoordinateValue(value) {
+        const shipSign = ["H", "B", "T"]
+        const hit = "X"
+        const miss = "#"
+        const ocean = 0
+        if (shipSign.some((e) => e === value )) {
+            return "ship"
+        } else if (hit === value) {
+            return "hit"
+        } else if (miss === value) {
+            return "miss"
+        } else if (ocean === value) {
+            return "ocean"
+        }
     }
 
     // Note: There is something wrong with this logic
@@ -82,6 +118,7 @@ class GameBoard {
         }
         return blocks;
     }
+
     #isItLegal(ship, x, y, headDirection) {
         // Check for duplicates
         const tailCoordinate = this.#tailPosition(ship, x, y, headDirection)
@@ -180,9 +217,11 @@ class GameBoard {
             this.#changeMark(x, y - shipLength + 1, tailMark);
         }
     }
+
     #changeMark(x, y, mark) {
         this.board[y][x] = mark;
     }
+    
     checkBoard(x, y) {
         return this.board[y][x];
     }

@@ -151,7 +151,7 @@ describe("receiveAttack", () => {
     })
     test("cannot attack same coordinate twice", () => {
         expect(myBoard.receiveAttack(9,9)).toBe("Miss!")
-        expect(myBoard.receiveAttack(9,9)).toThrow(
+        expect(() => myBoard.receiveAttack(9,9)).toThrow(
             "You cannot attack same coordinate twice!"
         )
     })

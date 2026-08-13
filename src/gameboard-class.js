@@ -47,10 +47,17 @@ class GameBoard {
         const coordinate = this.checkBoard(x,y)
         const corValue = this.#returnCoordinateValue(coordinate)
         if (corValue === 'ship') {
+            // mutate the board
+            this.#changeMark(x,y,"X")
+            
             return "Hit!"
         } else if (corValue === 'ocean') {
+            // mutate the board
+            this.#changeMark(x,y,"#")
+            
             return "Miss!"
         } else if (corValue === 'hit' || corValue === 'miss') {
+            console.log("Line executed")
             throw new Error ("You cannot attack same coordinate twice!")
         }
         // If it includes H, B or T

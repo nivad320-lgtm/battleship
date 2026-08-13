@@ -119,4 +119,22 @@ describe("isItLegal works", () => {
             "You cannot have overlaps!",
         );
     });
+
+    test("Blocks out of bound coordinates", () => {
+        expect(() => myBoard.placeShip("Submarine", -3, 0, "eastHead")).toThrow(
+            "You cannot place outside the board!"
+        )
+        expect(() => myBoard.placeShip("BattleShip", 0, -2, "northHead")).toThrow(
+            "You cannot place outside the board!"
+        )
+        expect(() => myBoard.placeShip("Submarine", -3, 0, "eastHead")).toThrow(
+            "You cannot place outside the board!"
+        )
+        expect(() => myBoard.placeShip("BattleShip", 0, 9, "northHead")).toThrow(
+            "You cannot place outside the board!"
+        )
+        expect(() => myBoard.placeShip("Submarine", 9, 1, "southHead")).toThrow(
+            "You cannot place outside the board!"
+        )
+    })
 });

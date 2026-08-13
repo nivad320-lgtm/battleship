@@ -66,7 +66,7 @@ class GameBoard {
             }
         }
         // If Y difference is 0
-        // BUG: This does not care which direction.
+        // (SOLVED) BUG: This does not care which direction.
         // For example eastHead Carrier should decrease X but it always increase
         else if (Math.abs(startY) - Math.abs(endY) === 0) {
             if(startX >= endX) {
@@ -84,21 +84,33 @@ class GameBoard {
     }
     #isItLegal(ship, x, y, headDirection) {
         // Check for duplicates
+        const tailCoordinate = this.#tailPosition(ship, x, y, headDirection)
         if (ship.status === true) {
             throw new Error("You cannot have duplicates!");
         }
 
-        // Check for overlaps
+        // Check of out of bounds
+        if (x < 0 || y < 0 || tailCoordinate[0] < 0 || tailCoordinate[1] < 0
+            || x > 9 || y > 9 || tailCoordinate[0] > 9 || tailCoordinate[1] > 9
+        ) {
+            throw new Error("You cannot place outside the board!")
+        }
+
+        // Preview of its route
         const preview = this.printBlock(
             [x, y],
-            this.#tailPosition(ship, x, y, headDirection),
+            tailCoordinate,
         );
         console.log(preview)
-        console.log(this.#tailPosition(ship, x, y, headDirection))
+        console.log(tailCoordinate)
+        
+
+        // Check for overlaps
         if (preview.some((element) => element !== 0)) {
             throw new Error("You cannot have overlaps!");
             // }
         }
+
     }
 
     #tailPosition(ship, x, y, headDirection) {

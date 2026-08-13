@@ -90,8 +90,7 @@ class GameBoard {
         }
 
         // Check of out of bounds
-        if (x < 0 || y < 0 || tailCoordinate[0] < 0 || tailCoordinate[1] < 0
-            || x > 9 || y > 9 || tailCoordinate[0] > 9 || tailCoordinate[1] > 9
+        if (!this.#outOfBoundsCheck(x,y,tailCoordinate[0],tailCoordinate[1])
         ) {
             throw new Error("You cannot place outside the board!")
         }
@@ -186,6 +185,13 @@ class GameBoard {
     }
     checkBoard(x, y) {
         return this.board[y][x];
+    }
+    #outOfBoundsCheck(startX, startY, tailX, tailY) {
+        if (startX < 0 || startY < 0 || tailX < 0 || tailY < 0
+            || startX > 9 || startY > 9 || tailX > 9 || tailY > 9) {
+                return false
+            }
+            return true
     }
 }
 

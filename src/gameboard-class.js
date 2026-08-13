@@ -20,8 +20,8 @@ class GameBoard {
         // create map of ships for constructor
         const ships = new Map();
 
-        ships.set("Carrier", new Ship(6));
-        ships.set("BattleShip", new Ship(5));
+        ships.set("Carrier", new Ship(5));
+        ships.set("BattleShip", new Ship(4));
         ships.set("Cruiser", new Ship(3));
         ships.set("Submarine", new Ship(3));
         ships.set("Destroyer", new Ship(2));
@@ -30,7 +30,7 @@ class GameBoard {
     }
     placeShip(shipType, x, y, headDirection) {
         const thisShip = this.ships.get(shipType);
-        console.log(thisShip);
+        // console.log(thisShip);
 
         // we need isItLegal function
         this.#isItLegal(thisShip, x, y, headDirection);
@@ -100,8 +100,8 @@ class GameBoard {
             [x, y],
             tailCoordinate,
         );
-        console.log(preview)
-        console.log(tailCoordinate)
+        // console.log(preview)
+        // console.log(tailCoordinate)
         
 
         // Check for overlaps

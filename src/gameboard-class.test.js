@@ -61,8 +61,7 @@ describe("GameBoard places ships at specific coordinates", () => {
         expect(myBoard.checkBoard(0, 1)).toBe("H");
         expect(myBoard.board[2][0]).toBe("B");
         expect(myBoard.board[3][0]).toBe("B");
-        expect(myBoard.board[4][0]).toBe("B");
-        expect(myBoard.board[5][0]).toBe("T");
+        expect(myBoard.board[4][0]).toBe("T");
     });
     test("Can place Carrier", () => {
         myBoard.placeShip("Carrier", 5, 7, "eastHead");
@@ -70,8 +69,7 @@ describe("GameBoard places ships at specific coordinates", () => {
         expect(myBoard.board[7][4]).toBe("B");
         expect(myBoard.board[7][3]).toBe("B");
         expect(myBoard.board[7][2]).toBe("B");
-        expect(myBoard.board[7][1]).toBe("B");
-        expect(myBoard.board[7][0]).toBe("T");
+        expect(myBoard.board[7][1]).toBe("T");
     });
 });
 
@@ -92,9 +90,8 @@ describe("isItLegal works", () => {
     test("printBlocks function work", () => {
         expect(() => myBoard.printBlock([3, 2], [4, 5])).toThrow("1D Only");
         myBoard.placeShip("Carrier", 7, 1, "northHead");
-        expect(myBoard.printBlock([7, 1], [7, 6])).toStrictEqual([
+        expect(myBoard.printBlock([7, 1], [7, 5])).toStrictEqual([
             "H",
-            "B",
             "B",
             "B",
             "B",
@@ -112,7 +109,7 @@ describe("isItLegal works", () => {
 
     test("Block overlapping", () => {
         myBoard.placeShip("Carrier", 7, 1, "northHead");
-        expect(() => myBoard.placeShip("Cruiser", 5, 6, "westHead")).toThrow(
+        expect(() => myBoard.placeShip("Cruiser", 5, 5, "westHead")).toThrow(
             "You cannot have overlaps!",
         );
         expect(() => myBoard.placeShip("Destroyer", 7, 1, "northHead")).toThrow(
@@ -138,3 +135,11 @@ describe("isItLegal works", () => {
         )
     })
 });
+
+// describe("receiveAttach", () => {
+//     let myBoard;
+//     beforeEach(() => {
+//         myBoard = new GameBoard();
+//         // myBoard 
+//     });
+// })

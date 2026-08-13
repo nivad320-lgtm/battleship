@@ -159,7 +159,18 @@ describe("receiveAttack", () => {
         myBoard.receiveAttack(9,9)
         expect(myBoard.checkBoard(9,9)).toBe("#")
     })
+    test("coordinateToShip returns ship on a specific coordinate", () => {
+        expect(myBoard.coordinateToShip(3,3)).toBe("Cruiser")
+    })
     test("sends the `hit` function to the correct ship", () => {
-        //spyOn?
+        myBoard.receiveAttack(3,3)
+        const cruiser = myBoard.ships.get("Cruiser")
+        expect(cruiser.hitCount).toBe(1)
+    })
+    test("sends the `hit` function to the correct ship 2", () => {
+        myBoard.placeShip("Carrier", 6, 4, "southHead")
+        myBoard.receiveAttack(6,2)
+        const carrier = myBoard.ships.get("Carrier")
+        expect(carrier.hitCount).toBe(1)
     })
 })

@@ -37,9 +37,14 @@ class GameBoard {
         // we need isItLegal function
         this.#isItLegal(thisShip, x, y, headDirection);
 
-        const updatedCor = this.#headDirectionLogic(thisShip, x, y, headDirection);
+        const updatedCor = this.#headDirectionLogic(
+            thisShip,
+            x,
+            y,
+            headDirection,
+        );
 
-        console.log(updatedCor)
+        console.log(updatedCor);
         this.#setShipStatus(thisShip, updatedCor);
     }
 
@@ -48,40 +53,71 @@ class GameBoard {
         // X - Been Hit
         // # - Missed
         // return hit
+
         
+        const coordinate = this.checkBoard(x, y);
+        const corValue = this.#returnCoordinateValue(coordinate);
+        if (corValue === "ship") {
+            // Find which ship it is 
+            const hitShipType = this.coordinateToShip(x,y)
+            
+            // Update hitCount of the ship
+            const hitShip = this.ships.get(hitShipType)
+            hitShip.hit()
+
+            // mutate the board
+            this.#changeMark(x, y, "X");
+
+            return "Hit!";
+        } else if (corValue === "ocean") {
+            // mutate the board
+            this.#changeMark(x, y, "#");
+
+            return "Miss!";
+        } else if (corValue === "hit" || corValue === "miss") {
+            // console.log("Line executed");
+            throw new Error("You cannot attack same coordinate twice!");
+        }
+
+        // send hit() function to the correct ship
+        // this.ships is a map of ships
+        /* 
+            for ship of ships map
+
+         */
+    }
+    coordinateToShip(x,y){
+        //Gets coordinate and returns the ship
+        const searchCor = [x,y]
         // Check the board
-        const coordinate = this.checkBoard(x,y)
-        const corValue = this.#returnCoordinateValue(coordinate)
-        if (corValue === 'ship') {
-            // mutate the board
-            this.#changeMark(x,y,"X")
-            
-            return "Hit!"
-        } else if (corValue === 'ocean') {
-            // mutate the board
-            this.#changeMark(x,y,"#")
-            
-            return "Miss!"
-        } else if (corValue === 'hit' || corValue === 'miss') {
-            console.log("Line executed")
-            throw new Error ("You cannot attack same coordinate twice!")
+        for (const [key, value] of this.ships) {
+            console.log('key: '+key)
+            console.log('value: ', value.status.coordinates)
+            if (value.status.coordinates) {
+
+                if(value.status.coordinates.some((e) => e.toString() === searchCor.toString()) ){
+                   return key
+               }
+               return
+            }
         }
         
+
     }
-    
+
     #returnCoordinateValue(value) {
-        const shipSign = ["H", "B", "T"]
-        const hit = "X"
-        const miss = "#"
-        const ocean = 0
-        if (shipSign.some((e) => e === value )) {
-            return "ship"
+        const shipSign = ["H", "B", "T"];
+        const hit = "X";
+        const miss = "#";
+        const ocean = 0;
+        if (shipSign.some((e) => e === value)) {
+            return "ship";
         } else if (hit === value) {
-            return "hit"
+            return "hit";
         } else if (miss === value) {
-            return "miss"
+            return "miss";
         } else if (ocean === value) {
-            return "ocean"
+            return "ocean";
         }
     }
 
@@ -103,8 +139,7 @@ class GameBoard {
                 for (let i = 0; i <= Math.abs(startY - endY); i++) {
                     blocks.push(this.checkBoard(startX, startY - i));
                 }
-            }
-            else {
+            } else {
                 for (let i = 0; i <= Math.abs(startY - endY); i++) {
                     blocks.push(this.checkBoard(startX, startY + i));
                 }
@@ -114,12 +149,11 @@ class GameBoard {
         // (SOLVED) BUG: This does not care which direction.
         // For example eastHead Carrier should decrease X but it always increase
         else if (Math.abs(startY) - Math.abs(endY) === 0) {
-            if(startX >= endX) {
+            if (startX >= endX) {
                 for (let i = 0; i <= Math.abs(startX - endX); i++) {
                     blocks.push(this.checkBoard(startX - i, startY));
                 }
-            }
-            else {
+            } else {
                 for (let i = 0; i <= Math.abs(startX - endX); i++) {
                     blocks.push(this.checkBoard(startX + i, startY));
                 }
@@ -130,32 +164,27 @@ class GameBoard {
 
     #isItLegal(ship, x, y, headDirection) {
         // Check for duplicates
-        const tailCoordinate = this.#tailPosition(ship, x, y, headDirection)
+        const tailCoordinate = this.#tailPosition(ship, x, y, headDirection);
         if (ship.status.placed === true) {
             throw new Error("You cannot have duplicates!");
         }
 
         // Check of out of bounds
-        if (!this.#outOfBoundsCheck(x,y,tailCoordinate[0],tailCoordinate[1])
+        if (
+            !this.#outOfBoundsCheck(x, y, tailCoordinate[0], tailCoordinate[1])
         ) {
-            throw new Error("You cannot place outside the board!")
+            throw new Error("You cannot place outside the board!");
         }
 
         // Preview of its route
-        const preview = this.printBlock(
-            [x, y],
-            tailCoordinate,
-        );
+        const preview = this.printBlock([x, y], tailCoordinate);
         // console.log(preview)
         // console.log(tailCoordinate)
-        
 
         // Check for overlaps
         if (preview.some((element) => element !== 0)) {
             throw new Error("You cannot have overlaps!");
-            // }
         }
-
     }
 
     #tailPosition(ship, x, y, headDirection) {
@@ -173,8 +202,8 @@ class GameBoard {
 
     #setShipStatus(ship, shipCoordinate) {
         ship.status = {
-            placed : true,
-            coordinates : shipCoordinate,
+            placed: true,
+            coordinates: shipCoordinate,
         };
     }
 
@@ -184,10 +213,10 @@ class GameBoard {
         const bodyMark = "B";
         const tailMark = "T";
         // Save and return coordinates that changed
-        const changedCor = []
+        const changedCor = [];
         // Set Head
         this.#changeMark(x, y, "H");
-        changedCor.push([x,y])
+        changedCor.push([x, y]);
         let tempX = x;
         let tempY = y;
         // eastHead
@@ -196,12 +225,11 @@ class GameBoard {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
                 this.#changeMark((tempX -= 1), tempY, bodyMark);
-            changedCor.push([tempX,tempY])
-
+                changedCor.push([tempX, tempY]);
             }
             // Set Tail
             this.#changeMark(x - shipLength + 1, y, tailMark);
-            changedCor.push([x - shipLength + 1,y])
+            changedCor.push([x - shipLength + 1, y]);
         }
 
         // westHead
@@ -209,11 +237,11 @@ class GameBoard {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
                 this.#changeMark((tempX += 1), tempY, bodyMark);
-                changedCor.push([tempX,tempY])
+                changedCor.push([tempX, tempY]);
             }
             // Set Tail
             this.#changeMark(x + shipLength - 1, y, tailMark);
-            changedCor.push([x + shipLength - 1,y])
+            changedCor.push([x + shipLength - 1, y]);
         }
 
         // northHead
@@ -221,11 +249,11 @@ class GameBoard {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
                 this.#changeMark(tempX, (tempY += 1), bodyMark);
-                changedCor.push([tempX,tempY])
+                changedCor.push([tempX, tempY]);
             }
             // Set Tail
             this.#changeMark(x, y + shipLength - 1, tailMark);
-            changedCor.push([x,y + shipLength -1])
+            changedCor.push([x, y + shipLength - 1]);
         }
 
         // southHead
@@ -233,28 +261,36 @@ class GameBoard {
             // Set Body
             for (let i = 0; i < shipLength - 2; i++) {
                 this.#changeMark(tempX, (tempY -= 1), bodyMark);
-                changedCor.push([tempX,tempY])
+                changedCor.push([tempX, tempY]);
             }
             // Set Tail
             this.#changeMark(x, y - shipLength + 1, tailMark);
-            changedCor.push([x,y - shipLength + 1])
+            changedCor.push([x, y - shipLength + 1]);
         }
-        return changedCor
+        return changedCor;
     }
 
     #changeMark(x, y, mark) {
         this.board[y][x] = mark;
     }
-    
+
     checkBoard(x, y) {
         return this.board[y][x];
     }
     #outOfBoundsCheck(startX, startY, tailX, tailY) {
-        if (startX < 0 || startY < 0 || tailX < 0 || tailY < 0
-            || startX > 9 || startY > 9 || tailX > 9 || tailY > 9) {
-                return false
-            }
-            return true
+        if (
+            startX < 0 ||
+            startY < 0 ||
+            tailX < 0 ||
+            tailY < 0 ||
+            startX > 9 ||
+            startY > 9 ||
+            tailX > 9 ||
+            tailY > 9
+        ) {
+            return false;
+        }
+        return true;
     }
 }
 

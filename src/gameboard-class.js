@@ -44,7 +44,7 @@ class GameBoard {
             headDirection,
         );
 
-        console.log(updatedCor);
+        // console.log(updatedCor);
         this.#setShipStatus(thisShip, updatedCor);
     }
 
@@ -54,16 +54,19 @@ class GameBoard {
         // # - Missed
         // return hit
 
-        
         const coordinate = this.checkBoard(x, y);
         const corValue = this.#returnCoordinateValue(coordinate);
         if (corValue === "ship") {
-            // Find which ship it is 
-            const hitShipType = this.coordinateToShip(x,y)
-            
+            // Find which ship it is
+            const hitShipType = this.coordinateToShip(x, y);
+            // console.log(coordinate)
+            // console.log('Checking coordinate ' + x, y)
+            // console.log('called ' + hitShipType)
+
             // Update hitCount of the ship
-            const hitShip = this.ships.get(hitShipType)
-            hitShip.hit()
+            const hitShip = this.ships.get(hitShipType);
+            // console.log('called ' + hitShip)
+            hitShip.hit();
 
             // mutate the board
             this.#changeMark(x, y, "X");
@@ -86,23 +89,34 @@ class GameBoard {
 
          */
     }
-    coordinateToShip(x,y){
+    coordinateToShip(x, y) {
         //Gets coordinate and returns the ship
-        const searchCor = [x,y]
+        const searchCor = [x, y];
         // Check the board
         for (const [key, value] of this.ships) {
-            console.log('key: '+key)
-            console.log('value: ', value.status.coordinates)
+            // console.log("key: " + key);
+            // console.log("value: ", value.status.coordinates);
             if (value.status.coordinates) {
-
-                if(value.status.coordinates.some((e) => e.toString() === searchCor.toString()) ){
-                   return key
-               }
-               return
+                if (
+                    value.status.coordinates.some(
+                        (e) => e.toString() === searchCor.toString(),
+                    )
+                ) {
+                    console.log(key)
+                    return key;
+                }
             }
         }
-        
+        return;
+    }
 
+    allSunk(){
+        for (const [key] of this.ships) {
+        if(!this.ships.get(key).isSunk()) {
+            return false
+        }
+    } 
+        return true
     }
 
     #returnCoordinateValue(value) {

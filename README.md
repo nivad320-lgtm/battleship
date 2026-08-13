@@ -12,4 +12,4 @@ ToDo
     // Note: Do I have to save the array of missed shots? 
     // Wondering because #returnCoordinateValue() is already returning it
 
-
+- [x] Gameboards should be able to report whether or not all of their ships have been sunk.

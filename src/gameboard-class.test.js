@@ -119,58 +119,131 @@ describe("isItLegal works", () => {
 
     test("Blocks out of bound coordinates", () => {
         expect(() => myBoard.placeShip("Submarine", -3, 0, "eastHead")).toThrow(
-            "You cannot place outside the board!"
-        )
-        expect(() => myBoard.placeShip("BattleShip", 0, -2, "northHead")).toThrow(
-            "You cannot place outside the board!"
-        )
+            "You cannot place outside the board!",
+        );
+        expect(() =>
+            myBoard.placeShip("BattleShip", 0, -2, "northHead"),
+        ).toThrow("You cannot place outside the board!");
         expect(() => myBoard.placeShip("Submarine", -3, 0, "eastHead")).toThrow(
-            "You cannot place outside the board!"
-        )
-        expect(() => myBoard.placeShip("BattleShip", 0, 9, "northHead")).toThrow(
-            "You cannot place outside the board!"
-        )
+            "You cannot place outside the board!",
+        );
+        expect(() =>
+            myBoard.placeShip("BattleShip", 0, 9, "northHead"),
+        ).toThrow("You cannot place outside the board!");
         expect(() => myBoard.placeShip("Submarine", 9, 1, "southHead")).toThrow(
-            "You cannot place outside the board!"
-        )
-    })
+            "You cannot place outside the board!",
+        );
+    });
 });
 
 describe("receiveAttack", () => {
     let myBoard;
     beforeEach(() => {
         myBoard = new GameBoard();
-        myBoard.placeShip("Cruiser", 3, 3, "eastHead") 
+        myBoard.placeShip("Cruiser", 3, 3, "eastHead");
     });
     test("receiveAttack function exists", () => {
-        expect(myBoard.receiveAttack(3,3)).toBeDefined();
-    })
-    test("determine whether or not attack hit the ship" , () => {
-        expect(myBoard.receiveAttack(3,3)).toBe("Hit!")
-        expect(myBoard.receiveAttack(4,3)).toBe("Miss!")
-    })
+        expect(myBoard.receiveAttack(3, 3)).toBeDefined();
+    });
+    test("determine whether or not attack hit the ship", () => {
+        expect(myBoard.receiveAttack(3, 3)).toBe("Hit!");
+        expect(myBoard.receiveAttack(4, 3)).toBe("Miss!");
+    });
     test("cannot attack same coordinate twice", () => {
-        expect(myBoard.receiveAttack(9,9)).toBe("Miss!")
-        expect(() => myBoard.receiveAttack(9,9)).toThrow(
-            "You cannot attack same coordinate twice!"
-        )
-    })
+        expect(myBoard.receiveAttack(9, 9)).toBe("Miss!");
+        expect(() => myBoard.receiveAttack(9, 9)).toThrow(
+            "You cannot attack same coordinate twice!",
+        );
+    });
     test("records the coordinate of the missed shot", () => {
-        myBoard.receiveAttack(9,9)
-        expect(myBoard.checkBoard(9,9)).toBe("#")
-    })
+        myBoard.receiveAttack(9, 9);
+        expect(myBoard.checkBoard(9, 9)).toBe("#");
+    });
     test("coordinateToShip returns ship on a specific coordinate", () => {
-        expect(myBoard.coordinateToShip(3,3)).toBe("Cruiser")
-    })
+        expect(myBoard.coordinateToShip(3, 3)).toBe("Cruiser");
+    });
     test("sends the `hit` function to the correct ship", () => {
-        myBoard.receiveAttack(3,3)
-        const cruiser = myBoard.ships.get("Cruiser")
-        expect(cruiser.hitCount).toBe(1)
-    })
+        myBoard.receiveAttack(3, 3);
+        const cruiser = myBoard.ships.get("Cruiser");
+        expect(cruiser.hitCount).toBe(1);
+    });
     test("sends the `hit` function to the correct ship 2", () => {
-        myBoard.placeShip("Carrier", 6, 4, "southHead")
-        myBoard.receiveAttack(6,2)
-        const carrier = myBoard.ships.get("Carrier")
-        expect(carrier.hitCount).toBe(1)
-    })
-})
+        myBoard.placeShip("Carrier", 6, 4, "southHead");
+        myBoard.receiveAttack(6, 2);
+        const carrier = myBoard.ships.get("Carrier");
+        expect(carrier.hitCount).toBe(1);
+    });
+});
+
+describe("allSunk", () => {
+    // Gameboards should be able to report whether or not all of their ships have been sunk.
+    let myBoard;
+    beforeEach(() => {
+        myBoard = new GameBoard();
+        myBoard.placeShip("Submarine", 4, 6, "northHead");
+        myBoard.placeShip("Destroyer", 8, 9, "westHead");
+        myBoard.placeShip("Cruiser", 3, 3, "eastHead");
+        myBoard.placeShip("BattleShip", 8, 5, "southHead");
+        myBoard.placeShip("Carrier", 6, 4, "southHead");
+    });
+    test("allSunk function exists", () => {
+        expect(myBoard.allSunk()).toBeDefined();
+    });
+
+    test("allSunk returns false if a ship is not sank", () => {
+        const attackCoordinates = [
+            // Submarine (x: 4, y: 6 -> northHead)
+            [4, 6],
+            [4, 7],
+            [4, 8],
+            // Destroyer (x: 8, y: 9 -> westHead)
+            [8, 9],
+            [9, 9],
+            // Cruiser (x: 3, y: 3 -> eastHead)
+            [3, 3],
+            [2, 3],
+            [1, 3],
+            // Battleship (x: 8, y: 5 -> southHead)
+            [8, 2],
+            [8, 3],
+            [8, 4],
+            [8, 5],
+        ];
+        attackCoordinates.forEach(([x,y])=>myBoard.receiveAttack(x,y))
+        expect(myBoard.allSunk()).toBe(false);
+    });
+    test("allSunk returns true if every ships sank", () => {
+        const attackCoordinates = [
+            // Submarine (x: 4, y: 6 -> northHead)
+            [4, 6],
+            [4, 7],
+            [4, 8],
+            // Destroyer (x: 8, y: 9 -> westHead)
+            [8, 9],
+            [9, 9],
+            // Cruiser (x: 3, y: 3 -> eastHead)
+            [3, 3],
+            [2, 3],
+            [1, 3],
+            // Battleship (x: 8, y: 5 -> southHead)
+            [8, 2],
+            [8, 3],
+            [8, 4],
+            [8, 5],
+            // Carrier (x: 6, y: 4 -> southHead)
+            [6, 0],
+            [6, 1],
+            [6, 2],
+            [6, 3],
+            [6, 4],
+        ];
+        attackCoordinates.forEach(([x,y])=>myBoard.receiveAttack(x,y))
+        expect(myBoard.allSunk()).toBe(true);
+    });
+    //Loop through ship and see isSunk() is true for all
+    // if all of them return true, then it is true
+
+    /* 
+
+    */
+});
